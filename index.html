@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot de Atendimento</title>
+    <style>
+        /* Estilização geral */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #6C63FF, #AB47BC);
+            color: #fff;
+        }
+
+        /* Container principal */
+        .container {
+            background: #ffffff;
+            color: #333;
+            text-align: center;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%; /* Ajusta a largura para telas menores */
+            box-sizing: border-box; /* Garante que padding não aumente a largura */
+        }
+
+        /* Título */
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #6C63FF;
+        }
+
+        /* Campo de entrada da mensagem */
+        input[type="text"] {
+            width: calc(100% - 20px); /* Garante que o input fique dentro do container */
+            max-width: 360px; /* Limita o tamanho máximo */
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        /* Estilo do input em foco */
+        input[type="text"]:focus {
+            border-color: #6C63FF;
+            box-shadow: 0 0 5px rgba(108, 99, 255, 0.5);
+        }
+
+        /* Botão de envio */
+        button {
+            width: calc(100% - 20px); /* Botão ajustado ao tamanho do container */
+            max-width: 360px; /* Limita o tamanho máximo */
+            padding: 15px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #6C63FF;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        /* Efeito hover do botão */
+        button:hover {
+            background-color: #5348C7;
+        }
+
+        /* Área de resposta */
+        #response {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #6C63FF;
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Rodapé com créditos */
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #888;
+        }
+        footer a {
+            color: #6C63FF;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        footer a:hover {
+            color: #AB47BC;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bot de Atendimento 🤖</h1>
+        <input type="text" id="userMessage" placeholder="Digite sua pergunta aqui..." />
+        <button id="sendButton">Enviar Pergunta</button>
+        <div id="response"></div>
+        <footer>
+            <p>Desenvolvido por <a href="#">Daniela Abreu</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Função para enviar a mensagem do usuário ao bot
+        async function sendMessage() {
+            // Obtém o valor digitado pelo usuário
+            const userMessage = document.getElementById("userMessage").value;
+
+            // Verifica se o usuário digitou algo
+            if (!userMessage) {
+                document.getElementById("response").innerText = "Por favor, digite uma pergunta!";
+                return;
+            }
+
+            try {
+                // Faz a solicitação ao bot usando a API Flask
+                const response = await fetch('http://127.0.0.1:5000/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: userMessage })
+                });
+
+                // Obtém a resposta do bot
+                const data = await response.json();
+
+                // Exibe a resposta na tela
+                document.getElementById("response").innerText = data.response;
+            } catch (error) {
+                // Exibe uma mensagem de erro em caso de problema
+                document.getElementById("response").innerText = "Erro ao se conectar ao bot. Verifique se ele está rodando.";
+                console.error("Erro:", error);
+            }
+        }
+
+        // Adiciona o evento de clique ao botão
+        document.getElementById("sendButton").addEventListener("click", sendMessage);
+    </script>
+</body>
+</html>
